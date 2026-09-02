@@ -33,4 +33,3 @@ Run `build.ps1` in Windows PowerShell. It uses the .NET Framework C# compiler in
 The output is `build\EMMU RPC.exe`. The launcher embeds `GeneratedApp.exe`, so the final launcher is a single distributable file.
 
 Run `test.ps1` to verify filename safety, preserved display/version names, launcher/child independence, normal window close, and temporary-file cleanup.
-

@@ -1,0 +1,14 @@
+# Build outputs
+build/
+bin/
+obj/
+
+# Visual Studio / IDE files
+.vs/
+*.user
+*.suo
+
+# Test and temporary artifacts
+TestResults/
+*.tmp
+*.log
