@@ -15,8 +15,8 @@ Download the ready-to-run Windows executable from the [latest release](https://g
 ## Use
 
 1. Open `EMMU RPC.exe`.
-2. Search the built-in catalog of 5,000 games and select a result, or enter your own custom application name.
-3. Select **Launch Selected** (or double-click a search result).
+2. Type in the centered name field to search the built-in catalog of 5,000 games, or enter your own custom application name.
+3. Click a search result once to fill the complete title. Nothing launches until you explicitly select **Launch Application**.
 4. In Discord Desktop, open **User Settings > Registered Games > Add it!** and select the running generated process.
 5. The generated window is independent of EMMU RPC. You may close EMMU RPC and keep the generated application open.
 6. Minimizing or closing the generated window hides it from the taskbar while its process remains active. Double-click its system-tray icon to reopen it.
@@ -44,3 +44,4 @@ Run `build.ps1` in Windows PowerShell. It uses the .NET Framework C# compiler in
 The output is `build\EMMU RPC.exe`. The launcher embeds `GeneratedApp.exe`, so the final launcher is a single distributable file.
 
 Run `test.ps1` to verify filename safety, preserved display/version names, launcher/child independence, normal window close, and temporary-file cleanup.
+

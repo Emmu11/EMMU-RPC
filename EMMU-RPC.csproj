@@ -21,6 +21,7 @@
   <ItemGroup>
     <Compile Include="Launcher\Program.cs" />
     <Compile Include="Launcher\GameNameCatalog.cs" />
+    <Compile Include="Launcher\NeonControls.cs" />
     <Compile Include="Launcher\VersionResourceWriter.cs" />
     <Compile Include="Launcher\AssemblyInfo.cs" />
     <EmbeddedResource Include="build\GeneratedApp.exe">
@@ -32,3 +33,4 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
+

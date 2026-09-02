@@ -34,9 +34,10 @@ $launcherArguments = @(
     "/reference:System.dll", "/reference:System.Core.dll", "/reference:System.Drawing.dll", "/reference:System.Windows.Forms.dll",
     "/resource:$buildDirectory\GeneratedApp.exe,EmmuRpc.Resources.GeneratedApp.exe",
     "/resource:$projectRoot\Resources\GameNames.txt,EmmuRpc.Resources.GameNames.txt",
-    "$projectRoot\Launcher\Program.cs", "$projectRoot\Launcher\GameNameCatalog.cs", "$projectRoot\Launcher\VersionResourceWriter.cs", "$projectRoot\Launcher\AssemblyInfo.cs"
+    "$projectRoot\Launcher\Program.cs", "$projectRoot\Launcher\GameNameCatalog.cs", "$projectRoot\Launcher\NeonControls.cs", "$projectRoot\Launcher\VersionResourceWriter.cs", "$projectRoot\Launcher\AssemblyInfo.cs"
 )
 & $compiler $launcherArguments
 if ($LASTEXITCODE -ne 0) { throw "EMMU RPC compilation failed." }
 
 Write-Host "Built: $buildDirectory\EMMU RPC.exe"
+
