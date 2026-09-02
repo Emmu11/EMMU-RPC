@@ -1,5 +1,9 @@
 # EMMU RPC
 
+<p align="center">
+  <img src="Assets/EMMU-RPC-logo.png" alt="EMMU RPC logo" width="220" />
+</p>
+
 EMMU RPC is a small native Windows launcher intended for Discord Desktop's manual **Registered Games > Add it!** flow.
 
 ## Download
@@ -15,7 +19,8 @@ Download the ready-to-run Windows executable from the [latest release](https://g
 3. Select **Launch**.
 4. In Discord Desktop, open **User Settings > Registered Games > Add it!** and select the running generated process.
 5. The generated window is independent of EMMU RPC. You may close EMMU RPC and keep the generated application open.
-6. Close the generated application when finished. Its temporary executable and directory are removed automatically shortly afterward.
+6. Minimizing or closing the generated window hides it from the taskbar while its process remains active. Double-click its system-tray icon to reopen it.
+7. Right-click the generated app's tray icon and select **Exit** when finished. Its temporary executable and directory are removed automatically shortly afterward.
 
 Discord controls how manually registered processes are classified and displayed. This tool improves compatibility by matching the temporary executable filename, Windows version metadata, process, and window title to the requested name; it does not create an official game entry or Discord Rich Presence integration.
 

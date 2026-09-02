@@ -30,6 +30,7 @@ $launcherArguments = @(
     "/nologo", "/optimize+", "/target:winexe", "/platform:anycpu",
     "/win32manifest:$projectRoot\app.manifest",
     "/out:$buildDirectory\EMMU RPC.exe",
+    "/win32icon:$projectRoot\Assets\EMMU-RPC.ico",
     "/reference:System.dll", "/reference:System.Core.dll", "/reference:System.Drawing.dll", "/reference:System.Windows.Forms.dll",
     "/resource:$buildDirectory\GeneratedApp.exe,EmmuRpc.Resources.GeneratedApp.exe",
     "$projectRoot\Launcher\Program.cs", "$projectRoot\Launcher\VersionResourceWriter.cs", "$projectRoot\Launcher\AssemblyInfo.cs"

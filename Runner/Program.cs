@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -68,6 +69,8 @@ namespace EmmuRpc.GeneratedApp
     internal sealed class GeneratedWindow : Form
     {
         private readonly int _autoExitMilliseconds;
+        private readonly NotifyIcon _trayIcon;
+        private bool _allowExit;
 
         public GeneratedWindow(string displayName, int autoExitMilliseconds)
         {
@@ -82,6 +85,24 @@ namespace EmmuRpc.GeneratedApp
             FormBorderStyle = FormBorderStyle.Sizable;
             MaximizeBox = true;
             MinimizeBox = true;
+
+            _trayIcon = new NotifyIcon();
+            _trayIcon.Icon = SystemIcons.Application;
+            _trayIcon.Text = displayName.Length > 63 ? displayName.Substring(0, 63) : displayName;
+            _trayIcon.Visible = true;
+            _trayIcon.DoubleClick += delegate { RestoreFromTray(); };
+
+            MenuItem openItem = new MenuItem("Open");
+            openItem.DefaultItem = true;
+            openItem.Click += delegate { RestoreFromTray(); };
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.Click += delegate { ExitCompletely(); };
+            _trayIcon.ContextMenu = new ContextMenu(new MenuItem[]
+            {
+                openItem,
+                new MenuItem("-"),
+                exitItem
+            });
 
             Panel card = new Panel();
             card.BackColor = Color.White;
@@ -112,6 +133,8 @@ namespace EmmuRpc.GeneratedApp
             Resize += delegate
             {
                 card.Location = new Point((ClientSize.Width - card.Width) / 2, (ClientSize.Height - card.Height) / 2);
+                if (WindowState == FormWindowState.Minimized)
+                    BeginInvoke(new MethodInvoker(HideToTray));
             };
         }
 
@@ -126,10 +149,52 @@ namespace EmmuRpc.GeneratedApp
                 {
                     timer.Stop();
                     timer.Dispose();
-                    Close();
+                    ExitCompletely();
                 };
                 timer.Start();
             }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (!_allowExit && e.CloseReason != CloseReason.WindowsShutDown)
+            {
+                e.Cancel = true;
+                HideToTray();
+                return;
+            }
+            base.OnFormClosing(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && _trayIcon != null)
+            {
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void HideToTray()
+        {
+            ShowInTaskbar = false;
+            Hide();
+        }
+
+        private void RestoreFromTray()
+        {
+            ShowInTaskbar = true;
+            Show();
+            WindowState = FormWindowState.Normal;
+            Activate();
+        }
+
+        private void ExitCompletely()
+        {
+            _allowExit = true;
+            _trayIcon.Visible = false;
+            Close();
         }
     }
 

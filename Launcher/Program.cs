@@ -44,6 +44,7 @@ namespace EmmuRpc
         {
             Text = "EMMU RPC";
             AccessibleName = "EMMU RPC";
+            try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = new Size(560, 340);
             MinimumSize = new Size(480, 310);

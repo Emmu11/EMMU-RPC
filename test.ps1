@@ -11,7 +11,7 @@ $encodedName = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($display
 $tempRoot = Join-Path $env:TEMP "EMMU-RPC"
 $before = @(Get-ChildItem -LiteralPath $tempRoot -Directory -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)
 
-$launcherProcess = Start-Process -FilePath $launcher -ArgumentList @("--headless-launch64", $encodedName) -PassThru
+$launcherProcess = Start-Process -FilePath $launcher -ArgumentList @("--headless-launch64", $encodedName, "--test-auto-exit-ms", "5000") -PassThru
 $null = $launcherProcess.WaitForExit(5000)
 Start-Sleep -Seconds 2
 
@@ -36,7 +36,10 @@ $checks = [ordered]@{
 }
 
 $null = $child.CloseMainWindow()
-$null = $child.WaitForExit(5000)
+Start-Sleep -Milliseconds 500
+$child.Refresh()
+$checks["CloseHidesInsteadOfExiting"] = -not $child.HasExited
+$null = $child.WaitForExit(7000)
 Start-Sleep -Seconds 4
 $checks["ChildClosed"] = $child.HasExited
 $checks["TemporaryFilesDeleted"] = -not (Test-Path -LiteralPath $newDirectory)
