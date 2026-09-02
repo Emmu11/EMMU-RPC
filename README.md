@@ -24,6 +24,12 @@ Download the ready-to-run Windows executable from the [latest release](https://g
 
 Discord controls how manually registered processes are classified and displayed. This tool improves compatibility by matching the temporary executable filename, Windows version metadata, process, and window title to the requested name; it does not create an official game entry or Discord Rich Presence integration.
 
+## 5,000 game-name reference list
+
+Not sure which game name to enter? Open the [5,000 game-name reference PDF](Resources/Upto-5k-Games-Name-List.pdf), copy any title, and paste it into EMMU RPC. The PDF is formatted with one game name per line for quick browsing and copying.
+
+The list is a naming reference only. Discord controls how a manually registered process is detected and displayed, so inclusion in this PDF does not guarantee official recognition or artwork.
+
 ## Naming and cleanup
 
 - The visible application/window name preserves the text entered by the user.
@@ -38,3 +44,4 @@ Run `build.ps1` in Windows PowerShell. It uses the .NET Framework C# compiler in
 The output is `build\EMMU RPC.exe`. The launcher embeds `GeneratedApp.exe`, so the final launcher is a single distributable file.
 
 Run `test.ps1` to verify filename safety, preserved display/version names, launcher/child independence, normal window close, and temporary-file cleanup.
+
