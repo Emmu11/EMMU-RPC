@@ -44,6 +44,15 @@ Start-Sleep -Seconds 4
 $checks["ChildClosed"] = $child.HasExited
 $checks["TemporaryFilesDeleted"] = -not (Test-Path -LiteralPath $newDirectory)
 
+$assembly = [Reflection.Assembly]::LoadFile($launcher)
+$catalogType = $assembly.GetType("EmmuRpc.GameNameCatalog", $true)
+$bindingFlags = [Reflection.BindingFlags]"Static, Public, NonPublic"
+$null = $catalogType.GetMethod("Load", $bindingFlags).Invoke($null, @())
+$catalogCount = $catalogType.GetProperty("Count", $bindingFlags).GetValue($null, $null)
+$searchResults = $catalogType.GetMethod("Search", $bindingFlags).Invoke($null, @("grand theft auto", 20))
+$checks["EmbeddedCatalogHas5000Names"] = $catalogCount -eq 5000
+$checks["CatalogSearchFindsGTA"] = @($searchResults | Where-Object { $_ -like "Grand Theft Auto*" }).Count -gt 0
+
 $checks.GetEnumerator() | ForEach-Object {
     [pscustomobject]@{ Check = $_.Key; Passed = $_.Value }
 } | Format-Table -AutoSize

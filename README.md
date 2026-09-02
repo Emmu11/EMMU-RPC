@@ -15,8 +15,8 @@ Download the ready-to-run Windows executable from the [latest release](https://g
 ## Use
 
 1. Open `EMMU RPC.exe`.
-2. Enter the game/application name you want (for example, `GTA V`).
-3. Select **Launch**.
+2. Search the built-in catalog of 5,000 games and select a result, or enter your own custom application name.
+3. Select **Launch Selected** (or double-click a search result).
 4. In Discord Desktop, open **User Settings > Registered Games > Add it!** and select the running generated process.
 5. The generated window is independent of EMMU RPC. You may close EMMU RPC and keep the generated application open.
 6. Minimizing or closing the generated window hides it from the taskbar while its process remains active. Double-click its system-tray icon to reopen it.
@@ -26,7 +26,7 @@ Discord controls how manually registered processes are classified and displayed.
 
 ## 5,000 game-name reference list
 
-Not sure which game name to enter? Open the [5,000 game-name reference PDF](Resources/Upto-5k-Games-Name-List.pdf), copy any title, and paste it into EMMU RPC. The PDF is formatted with one game name per line for quick browsing and copying.
+The complete list is built directly into EMMU RPC for instant offline search. The original [5,000 game-name reference PDF](Resources/Upto-5k-Games-Name-List.pdf) is also available for browsing outside the app.
 
 The list is a naming reference only. Discord controls how a manually registered process is detected and displayed, so inclusion in this PDF does not guarantee official recognition or artwork.
 
@@ -44,4 +44,3 @@ Run `build.ps1` in Windows PowerShell. It uses the .NET Framework C# compiler in
 The output is `build\EMMU RPC.exe`. The launcher embeds `GeneratedApp.exe`, so the final launcher is a single distributable file.
 
 Run `test.ps1` to verify filename safety, preserved display/version names, launcher/child independence, normal window close, and temporary-file cleanup.
-

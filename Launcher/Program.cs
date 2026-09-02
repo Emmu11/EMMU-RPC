@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -36,7 +37,10 @@ namespace EmmuRpc
 
     internal sealed class LauncherWindow : Form
     {
-        private readonly TextBox _nameBox;
+        private readonly TextBox _searchBox;
+        private readonly Button _searchButton;
+        private readonly ListBox _resultsList;
+        private readonly Label _countLabel;
         private readonly Button _launchButton;
         private readonly Label _statusLabel;
 
@@ -46,9 +50,9 @@ namespace EmmuRpc
             AccessibleName = "EMMU RPC";
             try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(560, 340);
-            MinimumSize = new Size(480, 310);
-            MaximumSize = new Size(760, 480);
+            ClientSize = new Size(620, 590);
+            MinimumSize = new Size(540, 520);
+            MaximumSize = new Size(860, 780);
             BackColor = Color.FromArgb(245, 247, 251);
             Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
 
@@ -58,37 +62,75 @@ namespace EmmuRpc
             heading.ForeColor = Color.FromArgb(25, 30, 43);
             heading.AutoSize = false;
             heading.TextAlign = ContentAlignment.MiddleCenter;
-            heading.SetBounds(60, 42, 440, 55);
+            heading.SetBounds(60, 24, 500, 55);
             heading.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
             Label subtitle = new Label();
-            subtitle.Text = "Launch a lightweight app for Discord Registered Games";
+            subtitle.Text = "Search 5,000 game names or enter your own";
             subtitle.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular, GraphicsUnit.Point);
             subtitle.ForeColor = Color.FromArgb(100, 109, 128);
             subtitle.AutoSize = false;
             subtitle.TextAlign = ContentAlignment.MiddleCenter;
-            subtitle.SetBounds(55, 95, 450, 28);
+            subtitle.SetBounds(55, 75, 510, 28);
             subtitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
-            _nameBox = new TextBox();
-            _nameBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            _nameBox.SetBounds(90, 151, 380, 34);
-            _nameBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            _nameBox.AccessibleName = "Enter application name";
-            _nameBox.MaxLength = 180;
-            NativeMethods.SetCueText(_nameBox, "Enter application name");
-            _nameBox.KeyDown += NameBoxOnKeyDown;
+            Label searchLabel = new Label();
+            searchLabel.Text = "Game or application name";
+            searchLabel.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
+            searchLabel.ForeColor = Color.FromArgb(55, 63, 82);
+            searchLabel.SetBounds(60, 116, 310, 24);
+
+            _searchBox = new TextBox();
+            _searchBox.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            _searchBox.SetBounds(60, 141, 390, 32);
+            _searchBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            _searchBox.AccessibleName = "Search game name";
+            _searchBox.MaxLength = 180;
+            NativeMethods.SetCueText(_searchBox, "Search game name");
+            _searchBox.TextChanged += delegate { UpdateSearchResults(); };
+            _searchBox.KeyDown += SearchBoxOnKeyDown;
+
+            _searchButton = new Button();
+            _searchButton.Text = "Search";
+            _searchButton.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
+            _searchButton.ForeColor = Color.FromArgb(63, 72, 94);
+            _searchButton.BackColor = Color.White;
+            _searchButton.FlatStyle = FlatStyle.Flat;
+            _searchButton.FlatAppearance.BorderColor = Color.FromArgb(205, 210, 222);
+            _searchButton.Cursor = Cursors.Hand;
+            _searchButton.SetBounds(460, 140, 100, 34);
+            _searchButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _searchButton.Click += delegate { UpdateSearchResults(); _searchBox.Focus(); };
+
+            _resultsList = new ListBox();
+            _resultsList.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point);
+            _resultsList.ForeColor = Color.FromArgb(30, 34, 45);
+            _resultsList.BackColor = Color.White;
+            _resultsList.BorderStyle = BorderStyle.FixedSingle;
+            _resultsList.IntegralHeight = false;
+            _resultsList.HorizontalScrollbar = true;
+            _resultsList.SetBounds(60, 188, 500, 250);
+            _resultsList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _resultsList.DoubleClick += delegate { LaunchRequestedApp(); };
+            _resultsList.KeyDown += ResultsListOnKeyDown;
+
+            _countLabel = new Label();
+            _countLabel.ForeColor = Color.FromArgb(100, 109, 128);
+            _countLabel.AutoSize = false;
+            _countLabel.TextAlign = ContentAlignment.MiddleLeft;
+            _countLabel.SetBounds(60, 443, 500, 27);
+            _countLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
             _launchButton = new Button();
-            _launchButton.Text = "Launch";
+            _launchButton.Text = "Launch Selected";
             _launchButton.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold, GraphicsUnit.Point);
             _launchButton.ForeColor = Color.White;
             _launchButton.BackColor = Color.FromArgb(88, 101, 242);
             _launchButton.FlatStyle = FlatStyle.Flat;
             _launchButton.FlatAppearance.BorderSize = 0;
             _launchButton.Cursor = Cursors.Hand;
-            _launchButton.SetBounds(190, 208, 180, 43);
-            _launchButton.Anchor = AnchorStyles.Top;
+            _launchButton.SetBounds(60, 480, 500, 43);
+            _launchButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             _launchButton.Click += LaunchButtonOnClick;
 
             _statusLabel = new Label();
@@ -97,18 +139,54 @@ namespace EmmuRpc
             _statusLabel.AutoSize = false;
             _statusLabel.AutoEllipsis = true;
             _statusLabel.TextAlign = ContentAlignment.MiddleCenter;
-            _statusLabel.SetBounds(60, 266, 440, 38);
-            _statusLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            _statusLabel.SetBounds(60, 532, 500, 34);
+            _statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
             Controls.Add(heading);
             Controls.Add(subtitle);
-            Controls.Add(_nameBox);
+            Controls.Add(searchLabel);
+            Controls.Add(_searchBox);
+            Controls.Add(_searchButton);
+            Controls.Add(_resultsList);
+            Controls.Add(_countLabel);
             Controls.Add(_launchButton);
             Controls.Add(_statusLabel);
             AcceptButton = _launchButton;
+
+            try
+            {
+                GameNameCatalog.Load();
+                UpdateSearchResults();
+            }
+            catch (Exception ex)
+            {
+                _statusLabel.ForeColor = Color.FromArgb(190, 55, 55);
+                _statusLabel.Text = "Could not load game list: " + ex.Message;
+            }
         }
 
-        private void NameBoxOnKeyDown(object sender, KeyEventArgs e)
+        private void SearchBoxOnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Down && _resultsList.Items.Count > 0)
+            {
+                _resultsList.Focus();
+                if (_resultsList.SelectedIndex < 0)
+                    _resultsList.SelectedIndex = 0;
+                e.SuppressKeyPress = true;
+            }
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                LaunchRequestedApp();
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                _searchBox.Clear();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void ResultsListOnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -124,12 +202,14 @@ namespace EmmuRpc
 
         private void LaunchRequestedApp()
         {
-            string displayName = (_nameBox.Text ?? String.Empty).Trim();
+            string displayName = _resultsList.SelectedItem as string;
+            if (String.IsNullOrWhiteSpace(displayName))
+                displayName = (_searchBox.Text ?? String.Empty).Trim();
             if (displayName.Length == 0)
             {
                 _statusLabel.ForeColor = Color.FromArgb(190, 55, 55);
-                _statusLabel.Text = "Enter an application name first.";
-                _nameBox.Focus();
+                _statusLabel.Text = "Search for a game or enter a custom name first.";
+                _searchBox.Focus();
                 return;
             }
 
@@ -153,6 +233,32 @@ namespace EmmuRpc
             {
                 _launchButton.Enabled = true;
             }
+        }
+
+        private void UpdateSearchResults()
+        {
+            List<string> matches = GameNameCatalog.Search(_searchBox.Text, 100);
+            _resultsList.BeginUpdate();
+            try
+            {
+                _resultsList.Items.Clear();
+                for (int i = 0; i < matches.Count; i++)
+                    _resultsList.Items.Add(matches[i]);
+                if (_resultsList.Items.Count > 0)
+                    _resultsList.SelectedIndex = 0;
+            }
+            finally
+            {
+                _resultsList.EndUpdate();
+            }
+
+            string query = (_searchBox.Text ?? String.Empty).Trim();
+            if (query.Length == 0)
+                _countLabel.Text = "Showing the first 100 of " + GameNameCatalog.Count.ToString("N0") + " games";
+            else if (matches.Count == 0)
+                _countLabel.Text = "No catalog match - Launch Selected will use your custom name";
+            else
+                _countLabel.Text = "Showing " + matches.Count + " matching result" + (matches.Count == 1 ? "" : "s");
         }
     }
 

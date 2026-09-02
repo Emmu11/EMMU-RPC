@@ -20,10 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Launcher\Program.cs" />
+    <Compile Include="Launcher\GameNameCatalog.cs" />
     <Compile Include="Launcher\VersionResourceWriter.cs" />
     <Compile Include="Launcher\AssemblyInfo.cs" />
     <EmbeddedResource Include="build\GeneratedApp.exe">
       <LogicalName>EmmuRpc.Resources.GeneratedApp.exe</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\GameNames.txt">
+      <LogicalName>EmmuRpc.Resources.GameNames.txt</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
